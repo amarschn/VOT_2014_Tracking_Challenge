@@ -36,7 +36,7 @@ def plot_pixel_position(pos):
     plt.legend(['X pixel location', 'Y pixel location'])
     plt.show()
 
-def rect_resize(rect, points, buffer=40):
+def rect_resize(rect, car_points, buffer=40):
     """
     Resizes a rectangle based on given points, will grow the rectangle by a buffered amount given the max and min values
     of the point array
@@ -47,15 +47,10 @@ def rect_resize(rect, points, buffer=40):
     :return:
     """
 
-    # Get the min and max x and y positions
-    min_point = min(points)
-    max_point = max(points)
-
     # Define the max and min of x and y to be added or subtracted the buffer, respectively
-    min_x = min_point[0] - buffer
-    max_x = max_point[0] + buffer
-    min_y = min_point[1] - buffer
-    max_y = max_point[1] + buffer
+    [min_x, min_y] = np.min(car_points,1) - buffer
+    [max_x, max_y] = np.max(car_points,1) + buffer
+
 
     # Grow the rectangle by the mean of the rectangles current position and the mean of the min and max x and y
     #  positions. This keeps the rectangle from re-sizing drastically every frame due to changing feature points

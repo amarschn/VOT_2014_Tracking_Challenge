@@ -51,7 +51,7 @@ def lk_optical_flow(imgs, detect_interval=5, car_rect=[5, 160, 50, 195], display
     # Initialize the frame index
     frame_idx = 0
 
-    # Loop through the image sequence, defining feature points every detection interval and
+    # Loop through the image sequence, defining feature points every detection interval
     while frame_idx < len(imgs):
 
         # Read the current frame
@@ -64,7 +64,8 @@ def lk_optical_flow(imgs, detect_interval=5, car_rect=[5, 160, 50, 195], display
         vis = frame.copy()
 
         # Empty the car points
-        car_points = []
+        x_car_points = []
+        y_car_points = []
 
         # If the length of points to track is greater than 0, then the Lucas-Kanade optical flow algorithm is run on
         # those feature points and the previous feature points
@@ -108,10 +109,12 @@ def lk_optical_flow(imgs, detect_interval=5, car_rect=[5, 160, 50, 195], display
 
                 # If the point lies within the car rectangle, add it to the car points array
                 if x > car_rect[0] and x < car_rect[2] and y > car_rect[1] and y < car_rect[3]:
-                    car_points.append((x, y))
+                    x_car_points.append(x)
+                    y_car_points.append(y)
 
             # Update the car rectangle if it contains any points
-            if len(car_points) > 0:
+            if len(x_car_points) > 0:
+                car_points = np.array([x_car_points, y_car_points])
                 car_rect = utilities.rect_resize(car_rect, car_points)
 
             # Append the center position of the car rectangle to the average position array

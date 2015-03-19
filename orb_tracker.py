@@ -39,7 +39,7 @@ def orb(imgs, car_rect=[5, 160, 50, 195], feature_params=dict(nfeatures=40), dis
         # Read the image
         frame = cv2.imread(imgs[frame_idx], 0)
 
-        # Initialize ORB feature detector
+        # Initialize ORB feature detector (default amount of features to track is 40)
         orb = cv2.ORB(**feature_params)
 
         # Detect keypoints in the current image with ORB
@@ -47,7 +47,8 @@ def orb(imgs, car_rect=[5, 160, 50, 195], feature_params=dict(nfeatures=40), dis
         key_points, _ = orb.compute(frame, key_points)
 
         # Initialize empty array that will contain points detected on the car
-        car_points = []
+        x_car_points = []
+        y_car_points = []
 
         # Loop through all key points detected by ORB and resize the car
         # rectangle based on the points contained by the rectangle
@@ -59,10 +60,14 @@ def orb(imgs, car_rect=[5, 160, 50, 195], feature_params=dict(nfeatures=40), dis
             # add it to the car_points array
             if x > car_rect[0] and x < car_rect[2] and y > car_rect[1] and y < car_rect[3]:
                 cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
-                car_points.append((x, y))
+                x_car_points.append(x)
+                y_car_points.append(y)
+
+
 
         # If there are any points in the car rectangle, resize the rectangle based on those points
-        if len(car_points) > 0:
+        if len(x_car_points) > 0:
+            car_points = np.array([x_car_points, y_car_points])
             car_rect = utilities.rect_resize(car_rect, car_points)
 
         # Append the center position of the car rectangle to the average position array
